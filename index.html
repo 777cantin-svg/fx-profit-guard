@@ -1,11 +1,1175 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>FX Profit Guard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FX Profit Guard｜本当の手取りを守れ</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --surface2: #181c24;
+    --border: #1e2430;
+    --accent: #00e5a0;
+    --accent2: #ff4560;
+    --warn: #ffb800;
+    --text: #e8eaf2;
+    --muted: #5a6070;
+    --mono: 'Share Tech Mono', monospace;
+    --head: 'Bebas Neue', cursive;
+    --body: 'Noto Sans JP', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,160,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,160,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 0 80px;
+  }
+
+  header {
+    padding: 20px 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-family: var(--head);
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-shadow: 0 0 20px rgba(0,229,160,0.4);
+  }
+
+  .logo span { color: var(--text); }
+
+  .status-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  .wrap-card {
+    margin: 20px 16px 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+  }
+
+  .mode-title {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .mode-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .mode-btn {
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    border-radius: 12px;
+    padding: 14px 10px;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all .15s;
+  }
+
+  .mode-btn.active {
+    border-color: rgba(0,229,160,0.4);
+    color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(0,229,160,0.08);
+  }
+
+  .mode-sub {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .hero {
+    margin: 20px 16px 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(0,229,160,0.08), transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .hero-amount {
+    font-family: var(--head);
+    font-size: 64px;
+    line-height: 1;
+    color: var(--accent);
+    text-shadow: 0 0 30px rgba(0,229,160,0.3);
+    letter-spacing: 2px;
+  }
+
+  .hero-amount .yen { font-size: 36px; margin-right: 4px; }
+  .hero-amount .unit { font-size: 20px; color: var(--muted); margin-left: 4px; }
+
+  .hero-sub {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+
+  .hero-sub span { color: var(--accent2); font-weight: bold; }
+
+  .tax-split {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .split-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+
+  .split-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .split-val {
+    font-family: var(--head);
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: 1px;
+  }
+
+  .split-val.green { color: var(--accent); }
+  .split-val.red { color: var(--accent2); }
+  .split-val.warn { color: var(--warn); }
+
+  .section {
+    margin: 14px 16px 0;
+  }
+
+  .section-title {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-left: 4px;
+  }
+
+  .input-group {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0 16px;
+    transition: border-color .2s;
+  }
+
+  .input-group:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(0,229,160,0.1);
+  }
+
+  .input-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .input-row:last-child { border-bottom: none; }
+
+  .input-icon {
+    font-size: 16px;
+    margin-right: 10px;
+    width: 22px;
+    text-align: center;
+  }
+
+  .input-label {
+    flex: 1;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .input-field {
+    background: none;
+    border: none;
+    outline: none;
+    font-family: var(--mono);
+    font-size: 16px;
+    color: var(--text);
+    text-align: right;
+    width: 140px;
+  }
+
+  .input-field::placeholder { color: #2a3040; }
+
+  .input-suffix {
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: 4px;
+  }
+
+  .stop-card {
+    margin: 14px 16px 0;
+    background: linear-gradient(135deg, #0f1f18 0%, #0a0c10 100%);
+    border: 1px solid rgba(0,229,160,0.25);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stop-card::after {
+    content: '判定';
+    font-family: var(--head);
+    font-size: 120px;
+    color: rgba(0,229,160,0.04);
+    position: absolute;
+    right: -10px; bottom: -30px;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .stop-tag {
+    display: inline-block;
+    background: var(--accent);
+    color: #000;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+
+  .stop-main {
+    font-family: var(--head);
+    font-size: 32px;
+    line-height: 1.1;
+    color: var(--accent);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  .stop-main .highlight { color: #fff; }
+
+  .stop-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 14px 16px 0;
+  }
+
+  .btn {
+    border: none;
+    border-radius: 12px;
+    padding: 18px 12px;
+    font-family: var(--body);
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all .15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0);
+    transition: background .15s;
+  }
+
+  .btn:active::after { background: rgba(255,255,255,0.1); }
+
+  .btn-stop {
+    background: var(--accent);
+    color: #000;
+    box-shadow: 0 4px 20px rgba(0,229,160,0.35);
+  }
+
+  .btn-stop:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,229,160,0.45);
+  }
+
+  .btn-continue {
+    background: var(--surface2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-continue:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  .btn-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+
+  .warn-bar {
+    margin: 14px 16px 0;
+    background: linear-gradient(90deg, rgba(255,184,0,0.08), transparent);
+    border: 1px solid rgba(255,184,0,0.2);
+    border-left: 3px solid var(--warn);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .warn-icon { font-size: 20px; flex-shrink: 0; }
+
+  .warn-text { font-size: 13px; line-height: 1.5; }
+  .warn-text strong { color: var(--warn); }
+
+  .danger-bar {
+    margin: 14px 16px 0;
+    background: linear-gradient(90deg, rgba(255,69,96,0.08), transparent);
+    border: 1px solid rgba(255,69,96,0.2);
+    border-left: 3px solid var(--accent2);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+
+  .danger-title {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .danger-text {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+
+  .reserve-card {
+    margin: 14px 16px 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+
+  .reserve-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .reserve-title {
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .reserve-badge {
+    font-size: 10px;
+    background: rgba(255,69,96,0.15);
+    color: var(--accent2);
+    border: 1px solid rgba(255,69,96,0.3);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-weight: 700;
+  }
+
+  .reserve-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .reserve-row:last-child { border-bottom: none; }
+
+  .reserve-key { font-size: 13px; color: var(--muted); }
+
+  .reserve-val {
+    font-family: var(--mono);
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .reserve-val.ok { color: var(--accent); }
+  .reserve-val.ng { color: var(--accent2); }
+
+  .progress-wrap {
+    margin: 10px 0 0;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .progress-track {
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+
+  .scenario-card {
+    margin: 14px 16px 0;
+    background: linear-gradient(135deg, #1a0c0e 0%, #0a0c10 100%);
+    border: 1px solid rgba(255,69,96,0.2);
+    border-radius: 16px;
+    padding: 18px 20px;
+    cursor: pointer;
+  }
+
+  .scenario-tag {
+    display: inline-block;
+    background: rgba(255,69,96,0.15);
+    color: var(--accent2);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(255,69,96,0.3);
+    margin-bottom: 12px;
+  }
+
+  .scenario-title {
+    font-size: 17px;
+    font-weight: 900;
+    line-height: 1.4;
+    margin-bottom: 10px;
+  }
+
+  .scenario-items {
+    list-style: none;
+  }
+
+  .scenario-items li {
+    font-size: 13px;
+    color: var(--muted);
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    gap: 8px;
+  }
+
+  .scenario-items li::before {
+    content: '▸';
+    color: var(--accent2);
+    flex-shrink: 0;
+  }
+
+  .scenario-items li strong { color: var(--accent2); }
+
+  .bracket-card {
+    margin: 14px 16px 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+
+  .bracket-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .bracket-row:last-child { border-bottom: none; }
+
+  .bracket-row.active {
+    background: rgba(0,229,160,0.05);
+    margin: 0 -8px;
+    padding: 7px 8px;
+    border-radius: 6px;
+    border-color: transparent;
+  }
+
+  .bracket-range {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    width: 120px;
+    flex-shrink: 0;
+  }
+
+  .bracket-bar-wrap {
+    flex: 1;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .bracket-bar {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--border);
+    transition: width 0.4s;
+  }
+
+  .bracket-row.active .bracket-bar { background: var(--accent); }
+  .bracket-rate {
+    font-family: var(--head);
+    font-size: 18px;
+    width: 50px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .bracket-row.active .bracket-rate { color: var(--accent); }
+
+  .you-badge {
+    font-size: 9px;
+    background: var(--accent);
+    color: #000;
+    font-weight: 900;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  .modal {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 100;
+    justify-content: center;
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal.open { display: flex; }
+
+  .modal-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px 20px 0 0;
+    padding: 28px 24px 40px;
+    width: 100%;
+    max-width: 480px;
+    animation: slideUp 0.25s ease;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .modal-title {
+    font-family: var(--head);
+    font-size: 28px;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    color: var(--accent);
+  }
+
+  .modal-body { font-size: 14px; line-height: 1.7; color: var(--muted); }
+  .modal-body strong { color: var(--text); }
+
+  .modal-close {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    color: var(--muted);
+    font-family: var(--body);
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .tab-row {
+    display: flex;
+    gap: 0;
+    margin: 14px 16px 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 3px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    border-radius: 7px;
+    padding: 9px 4px;
+    font-family: var(--body);
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .15s;
+  }
+
+  .tab-btn.active {
+    background: var(--surface2);
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .divider {
+    margin: 18px 16px 0;
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+
+  .tagline {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    padding: 16px;
+    font-style: italic;
+  }
+
+  .tagline span { color: var(--accent2); }
+
+  footer {
+    margin: 30px 16px 0;
+    text-align: center;
+    font-size: 11px;
+    color: #2a3040;
+    line-height: 1.8;
+  }
+
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type=number] { -moz-appearance: textfield; }
+</style>
 </head>
 <body>
-  <h1>FX Profit Guard</h1>
-  <p>FXの税金と手取りを計算するアプリ</p>
+<div class="wrap">
+
+  <header>
+    <div class="logo">FX<span>Profit</span>Guard</div>
+    <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);">
+      <span>LIVE</span>
+      <div class="status-dot"></div>
+    </div>
+  </header>
+
+  <p class="tagline">「その利益、<span>本当に</span>あなたのものですか？」</p>
+
+  <div class="wrap-card">
+    <div class="mode-title">MODE SELECT</div>
+    <div class="mode-row">
+      <button class="mode-btn active" id="modeDomesticBtn" onclick="setMode('domestic')">
+        国内FX
+        <span class="mode-sub">申告分離課税ベース</span>
+      </button>
+      <button class="mode-btn" id="modeOverseasBtn" onclick="setMode('overseas')">
+        海外FX
+        <span class="mode-sub">給与合算の概算警告</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="section-title">📊 収入入力</p>
+    <div class="input-group">
+      <div class="input-row">
+        <span class="input-icon">💼</span>
+        <span class="input-label">年収（給与所得）</span>
+        <input class="input-field" type="number" id="salary" placeholder="0" oninput="calc()">
+        <span class="input-suffix">万円</span>
+      </div>
+      <div class="input-row">
+        <span class="input-icon">📈</span>
+        <span class="input-label">FX利益（今年累計）</span>
+        <input class="input-field" type="number" id="fxProfit" placeholder="0" oninput="calc()">
+        <span class="input-suffix">万円</span>
+      </div>
+      <div class="input-row">
+        <span class="input-icon">💰</span>
+        <span class="input-label">税金確保済み</span>
+        <input class="input-field" type="number" id="reserved" placeholder="0" oninput="calc()">
+        <span class="input-suffix">万円</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero" id="heroCard">
+    <div class="hero-label">TODAY'S TAKE-HOME</div>
+    <div class="hero-amount" id="takeHomeDisplay">
+      <span class="yen">¥</span><span id="takeHomeVal">0</span><span class="unit">万円</span>
+    </div>
+    <div class="hero-sub">今やめたら <span id="stopNowText">¥ 0 万円</span> が確定する</div>
+
+    <div class="tax-split">
+      <div class="split-box">
+        <div class="split-label">推定税額</div>
+        <div class="split-val red" id="taxDisplay">0万円</div>
+      </div>
+      <div class="split-box">
+        <div class="split-label">実効税率</div>
+        <div class="split-val warn" id="rateDisplay">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stop-card">
+    <div class="stop-tag">⚡ やめ時判定</div>
+    <div class="stop-main" id="stopMain">入力してください</div>
+    <div class="stop-desc" id="stopDesc">年収とFX利益を入力すると判定が表示されます。</div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-stop" onclick="onStop()">
+      <span class="btn-icon">🏆</span>
+      今やめる（勝ち確）
+    </button>
+    <button class="btn btn-continue" onclick="onContinue()">
+      <span class="btn-icon">🎯</span>
+      続ける
+    </button>
+  </div>
+
+  <hr class="divider">
+
+  <div class="tab-row">
+    <button class="tab-btn active" onclick="switchTab('tax', this)">税率警告</button>
+    <button class="tab-btn" onclick="switchTab('reserve', this)">税金確保</button>
+    <button class="tab-btn" onclick="switchTab('scenario', this)">破滅シナリオ</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-tax">
+    <div class="bracket-card">
+      <div class="section-title" style="margin:0 0 10px;">⚠️ 税率ブレイク警告</div>
+
+      <div class="warn-bar" id="warnBar" style="margin:0 0 14px;display:none;">
+        <span class="warn-icon">⚡</span>
+        <div class="warn-text" id="warnText">
+          <strong>あと+XX万で税率UP！</strong>
+        </div>
+      </div>
+
+      <div id="bracketList"></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-reserve">
+    <div class="reserve-card" style="margin:14px 16px 0;">
+      <div class="reserve-header">
+        <span class="reserve-title">💰 税金確保チェック</span>
+        <span class="reserve-badge" id="reserveBadge">要確認</span>
+      </div>
+      <div class="reserve-row">
+        <span class="reserve-key">確保推奨額</span>
+        <span class="reserve-val ok" id="reserveNeeded">0万円</span>
+      </div>
+      <div class="reserve-row">
+        <span class="reserve-key">確保済み</span>
+        <span class="reserve-val" id="reservedAmt">0万円</span>
+      </div>
+      <div class="reserve-row">
+        <span class="reserve-key">不足額</span>
+        <span class="reserve-val ng" id="reserveShort">0万円</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span>確保率</span>
+          <span id="reservePct">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="reserveBar" style="width:0%;background:var(--accent2);"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-scenario">
+    <div class="scenario-card" style="margin:14px 16px 0;" onclick="openScenarioModal()">
+      <div class="scenario-tag">☠ 最悪ケース</div>
+      <div class="scenario-title">利益を伸ばそうとして、最後に全部崩れるパターン</div>
+      <ul class="scenario-items">
+        <li><strong>勝っている時</strong>ほどロットを上げやすい</li>
+        <li>含み益を見て「もっといける」と思いやすい</li>
+        <li>最後に大きく負けると、<strong>税金だけ残る</strong>ことがある</li>
+        <li>確保していない利益は、まだ自分の金ではない</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="danger-bar" id="messageBox" style="display:none;">
+    <div class="danger-title" id="messageTitle">注意</div>
+    <div class="danger-text" id="messageText">メッセージ</div>
+  </div>
+
+  <footer>
+    国内FXは申告分離課税の概算、海外FXは総合課税の概算警告です。<br>
+    実際の税額は控除・住民税・復興特別所得税・所得区分等で変動します。<br>
+    最終判断は税理士・税務署等で確認してください。
+  </footer>
+
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="modal-title" id="modalTitle">判定</div>
+    <div class="modal-body" id="modalBody"></div>
+    <button class="modal-close" onclick="closeModal()">閉じる</button>
+  </div>
+</div>
+
+<script>
+  let currentMode = 'domestic';
+
+  const overseasBrackets = [
+    { min: 0, max: 195, rate: 5 },
+    { min: 195, max: 330, rate: 10 },
+    { min: 330, max: 695, rate: 20 },
+    { min: 695, max: 900, rate: 23 },
+    { min: 900, max: 1800, rate: 33 },
+    { min: 1800, max: 4000, rate: 40 },
+    { min: 4000, max: Infinity, rate: 45 }
+  ];
+
+  const domesticFixedRate = 20.315;
+
+  function formatMan(val) {
+    return Number(val || 0).toLocaleString('ja-JP');
+  }
+
+  function getOverseasIncomeTaxRate(income) {
+    for (const b of overseasBrackets) {
+      if (income >= b.min && income < b.max) return b.rate;
+    }
+    return 45;
+  }
+
+  function getNextOverseasBracket(income) {
+    for (const b of overseasBrackets) {
+      if (income >= b.min && income < b.max) return b.max;
+    }
+    return null;
+  }
+
+  function setMode(mode) {
+    currentMode = mode;
+
+    document.getElementById('modeDomesticBtn').classList.toggle('active', mode === 'domestic');
+    document.getElementById('modeOverseasBtn').classList.toggle('active', mode === 'overseas');
+
+    calc();
+  }
+
+  function calc() {
+    const salary = Number(document.getElementById('salary').value) || 0;
+    const fxProfit = Number(document.getElementById('fxProfit').value) || 0;
+    const reserved = Number(document.getElementById('reserved').value) || 0;
+
+    let estimatedTax = 0;
+    let effectiveRate = 0;
+    let takeHome = 0;
+    let stopMain = '';
+    let stopDesc = '';
+    let reserveNeeded = 0;
+    let warnVisible = false;
+    let warnText = '';
+
+    if (currentMode === 'domestic') {
+      effectiveRate = domesticFixedRate;
+      estimatedTax = Math.round(fxProfit * effectiveRate / 100);
+      takeHome = Math.max(fxProfit - estimatedTax, 0);
+      reserveNeeded = estimatedTax;
+
+      if (fxProfit <= 0) {
+        stopMain = '入力してください';
+        stopDesc = '利益を入力すると、国内FXベースの概算が表示されます。';
+      } else if (reserved < estimatedTax * 0.7) {
+        stopMain = '税金確保が <span class="highlight">不足気味</span>';
+        stopDesc = '国内FXは税率が比較的読みやすいですが、確保していないと後で苦しくなります。';
+      } else if (takeHome >= fxProfit * 0.75) {
+        stopMain = '今やめるのは <span class="highlight">かなり合理的</span>';
+        stopDesc = '利益のかなりを手元に残せる状態です。勝ち逃げ判断として悪くありません。';
+      } else {
+        stopMain = '利益あり、でも <span class="highlight">油断注意</span>';
+        stopDesc = '税金は読めても、続行で利益が減るリスクは消えません。';
+      }
+
+      warnVisible = true;
+      warnText = '<strong>国内FXは基本20.315%</strong><br>大きな段階税率ジャンプではなく、固定税率ベースで概算しています。';
+
+      renderDomesticList();
+    } else {
+      const taxableIncome = salary + fxProfit;
+      const incomeTaxRate = getOverseasIncomeTaxRate(taxableIncome);
+      const residentTaxRate = 10;
+      effectiveRate = incomeTaxRate + residentTaxRate;
+      estimatedTax = Math.round(fxProfit * effectiveRate / 100);
+      takeHome = Math.max(fxProfit - estimatedTax, 0);
+      reserveNeeded = estimatedTax;
+
+      if (fxProfit <= 0) {
+        stopMain = '入力してください';
+        stopDesc = '利益を入力すると、海外FXベースの概算警告が表示されます。';
+      } else if (reserved < estimatedTax * 0.5) {
+        stopMain = '危険：<span class="highlight">税金未確保</span>';
+        stopDesc = '海外FXは総合課税で重くなりやすいです。勝っていても税金未確保は危険です。';
+      } else if (takeHome >= fxProfit * 0.65) {
+        stopMain = '今やめるのは <span class="highlight">有力</span>';
+        stopDesc = 'ここで止めれば、手取りをかなり残せる可能性があります。';
+      } else {
+        stopMain = '税負担が <span class="highlight">重いゾーン</span>';
+        stopDesc = '利益を伸ばす前に、税金確保と今の手取りを冷静に見直してください。';
+      }
+
+      const next = getNextOverseasBracket(taxableIncome);
+      if (next && next !== Infinity) {
+        const remain = Math.max(next - taxableIncome, 0);
+        warnVisible = true;
+        warnText = `<strong>あと+${formatMan(remain)}万で税率UP！</strong><br>現在の合計所得は ${formatMan(taxableIncome)} 万円です。`;
+      } else {
+        warnVisible = false;
+      }
+
+      renderOverseasList(taxableIncome);
+    }
+
+    document.getElementById('takeHomeVal').textContent = formatMan(takeHome);
+    document.getElementById('stopNowText').textContent = `¥ ${formatMan(takeHome)} 万円`;
+    document.getElementById('taxDisplay').textContent = `${formatMan(estimatedTax)}万円`;
+    document.getElementById('rateDisplay').textContent = `${effectiveRate}%`;
+
+    document.getElementById('stopMain').innerHTML = stopMain;
+    document.getElementById('stopDesc').textContent = stopDesc;
+
+    document.getElementById('reserveNeeded').textContent = `${formatMan(reserveNeeded)}万円`;
+    document.getElementById('reservedAmt').textContent = `${formatMan(reserved)}万円`;
+
+    const shortage = Math.max(reserveNeeded - reserved, 0);
+    document.getElementById('reserveShort').textContent = `${formatMan(shortage)}万円`;
+
+    const reservePct = reserveNeeded > 0 ? Math.min((reserved / reserveNeeded) * 100, 100) : 0;
+    document.getElementById('reservePct').textContent = `${Math.round(reservePct)}%`;
+
+    const reserveBar = document.getElementById('reserveBar');
+    reserveBar.style.width = `${reservePct}%`;
+    reserveBar.style.background = reservePct >= 100 ? 'var(--accent)' : reservePct >= 70 ? 'var(--warn)' : 'var(--accent2)';
+
+    const reserveBadge = document.getElementById('reserveBadge');
+    if (reserveNeeded === 0) {
+      reserveBadge.textContent = '未入力';
+    } else if (reserved >= reserveNeeded) {
+      reserveBadge.textContent = '確保済み';
+    } else {
+      reserveBadge.textContent = '不足あり';
+    }
+
+    const warnBar = document.getElementById('warnBar');
+    const warnTextEl = document.getElementById('warnText');
+
+    if (warnVisible) {
+      warnBar.style.display = 'flex';
+      warnTextEl.innerHTML = warnText;
+    } else {
+      warnBar.style.display = 'none';
+    }
+  }
+
+  function renderDomesticList() {
+    const list = document.getElementById('bracketList');
+    list.innerHTML = `
+      <div class="bracket-row active">
+        <div class="bracket-range">国内FX</div>
+        <div class="bracket-bar-wrap">
+          <div class="bracket-bar" style="width:70%;background:var(--accent);"></div>
+        </div>
+        <div class="bracket-rate">20.315%</div>
+        <span class="you-badge">FIX</span>
+      </div>
+      <div class="bracket-row">
+        <div class="bracket-range">内訳目安</div>
+        <div class="bracket-bar-wrap">
+          <div class="bracket-bar" style="width:53%;"></div>
+        </div>
+        <div class="bracket-rate">15%</div>
+      </div>
+      <div class="bracket-row">
+        <div class="bracket-range">住民税等</div>
+        <div class="bracket-bar-wrap">
+          <div class="bracket-bar" style="width:26%;"></div>
+        </div>
+        <div class="bracket-rate">5.315%</div>
+      </div>
+    `;
+  }
+
+  function renderOverseasList(income) {
+    const list = document.getElementById('bracketList');
+    list.innerHTML = '';
+
+    overseasBrackets.forEach((b) => {
+      const row = document.createElement('div');
+      row.className = 'bracket-row';
+
+      if (income >= b.min && income < b.max) {
+        row.classList.add('active');
+      }
+
+      const range = b.max === Infinity ? `${b.min}万〜` : `${b.min}〜${b.max}万`;
+
+      row.innerHTML = `
+        <div class="bracket-range">${range}</div>
+        <div class="bracket-bar-wrap">
+          <div class="bracket-bar" style="width:${Math.min(b.rate * 2, 100)}%"></div>
+        </div>
+        <div class="bracket-rate">${b.rate}%</div>
+      `;
+
+      if (income >= b.min && income < b.max) {
+        const badge = document.createElement('span');
+        badge.className = 'you-badge';
+        badge.textContent = 'YOU';
+        row.appendChild(badge);
+      }
+
+      list.appendChild(row);
+    });
+  }
+
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active'));
+
+    btn.classList.add('active');
+    document.getElementById(`tab-${tab}`).classList.add('active');
+  }
+
+  function openModal(title, body) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalBody').innerHTML = body;
+    document.getElementById('modal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+  }
+
+  function onStop() {
+    const takeHome = document.getElementById('takeHomeVal').textContent;
+    const tax = document.getElementById('taxDisplay').textContent;
+    const modeLabel = currentMode === 'domestic' ? '国内FX' : '海外FX';
+
+    openModal(
+      '今やめる判断',
+      `${modeLabel}モードで見た場合、今やめたときの推定手取りは <strong>${takeHome}万円</strong>、推定税額は <strong>${tax}</strong> です。<br><br>利益を守るという意味では、ここで止める判断はかなり合理的です。`
+    );
+  }
+
+  function onContinue() {
+    const body = currentMode === 'domestic'
+      ? `国内FXは税率が読みやすいですが、<strong>勝ちを削るリスク</strong>は残ります。<br><br>まずは税金分を別口で確保してから続行してください。`
+      : `海外FXは総合課税で重くなりやすいです。<strong>税金分を先に確保</strong>しないまま続けるのは危険です。<br><br>含み益ではなく、確保済みの利益で考えてください。`;
+
+    openModal('続ける前に確認', body);
+  }
+
+  function openScenarioModal() {
+    openModal(
+      '破滅シナリオ',
+      `一番危ないのは、<strong>勝っている時に気が大きくなること</strong>です。<br><br>利益が出る → ロットを上げる → 一撃で崩れる → でも税金は残る、という流れは珍しくありません。<br><br><strong>確保していない利益は、まだ自分の金ではない</strong>という前提で考えるのが安全です。`
+    );
+  }
+
+  document.getElementById('modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  calc();
+</script>
 </body>
 </html>
